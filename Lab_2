@@ -1,0 +1,135 @@
+%% Linear Systems and Signals Laboratory 2
+% Convolution for Linear Dynamic Systems
+% Submitted by: Michael Soskind
+% TA: Cagdas Karatas, Section 5
+
+%% Part 1
+
+% Section A
+% Making an Impulse Response using the impulse command
+% The function that we are getting the denominator and numerator values
+% from is the following equation:
+% 1*y''(t) + 4*y'(t) + 3*y(t) = 1*f'(t)+ 5*f(t)
+% This is over a time period of 5 seconds and an increment of 
+
+T=0.1;                          % Increment of 0.1 seconds
+t=0:T:5;                        % Time Range of 5 seconds
+
+den = [1, 4, 3];                % Originating from coefficients of poly
+num = [1, 5];
+h = impulse(num,den,t);         % Defining the impulse response
+
+figure();
+plot(t, h);
+
+% Section B
+% Making an Step Response Function using the step command
+% We use the same numerator and denominator as from before
+
+figure();
+ystep= step(num,den,t);         % Defining the step response
+
+f=ones(1,length(t));
+Lf=length(f);
+Lh=length(h);
+for k=1:Lf+Lh-1                 % Performing the convolution
+    y(k)=0;
+    for i=max(1,k-(Lh-1)):min(k,Lf)
+        y(k)=y(k)+f(i)*h(k-i+1);
+    end
+yzsappr(k)=T*y(k);
+end
+
+plot(t, ystep, '-b', t,yzsappr(1:length(t)), '-r');
+title('Approximative evaluation of the convolution');
+xlabel('Time'); ylabel('Zero-state approximative response');
+legend('Repsonse',' Convolution Sin(2t)*\delta (t)','Location','nw');
+
+% Part C
+
+figure()
+u = sin(2.*t);                  % Defining the function sin(2t)
+resp= lsim(num,den,u,t);        % Defining the arbitary response
+
+f=u;
+Lf=length(f);
+Lh=length(h);
+for k=1:Lf+Lh-1                 % Performing the convolution
+    y(k)=0;
+    for i=max(1,k-(Lh-1)):min(k,Lf)
+        y(k)=y(k)+f(i)*h(k-i+1);
+    end
+yzsappr(k)=T*y(k);
+end
+
+plot(t,yzsappr(1:length(t)), '-r', t, resp, '-b');
+title('Approximative evaluation of the convolution');
+xlabel('Time'); ylabel('Zero-state approximative response');
+legend('Repsonse',' Convolution Sin(2t)*\delta (t)','Location','nw');
+
+%% Part 2
+
+% Section A
+% Making an Impulse Response using the impulse command
+% The function that we are getting the denominator and numerator values
+% from is the following equation:
+% y[k+2]-0.5y[k+1]+0.006y[k] = f[k+1]-4f[k]
+% This is over a time period of 5 seconds and an increment of 
+
+figure();
+T=1;                                % Increment of 1 seconds
+t=0:T:10;                           % Time Range of 5 seconds
+
+den = [1, -0.5, 0.006];             % Originating from coefficients of poly
+num = [1, -4];
+h = dimpulse(num,den,length(t));
+
+plot(t, h, '.b');
+
+% Section B
+% Making an Step Response Function using the step command
+% We use the same numerator and denominator as from before
+
+figure();
+dystep=dstep(num,den,length(t)); % Defining the discrete response
+
+u = ones(1,length(t));          % Defining the unit step
+
+Lf=length(u);
+Lh=length(h);
+for k=1:Lf+Lh-1                 % Performing the convolution
+    y(k)=0;
+    for i=max(1,k-(Lh-1)):min(k,Lf)
+        y(k)=y(k)+u(i)*h(k-i+1);
+    end
+yzsappr(k)=T*y(k);
+end
+
+title('The two signals being convolved');
+plot(t,yzsappr(1:length(t)), '.b', t, dystep, 'or')
+title('Approximative evaluation of the convolution (zero-state response)');
+xlabel('Time'); ylabel('Zero-state approximative response');
+legend('Step Function','Convolution','Location','nw');
+
+
+% Part C
+
+figure();
+f = sin(2.*t);                  % Defining the Arbitrary Function
+dresp= dlsim(num,den,f);        % Finding the built-in convolution
+
+Lf=length(f);
+Lh=length(h);
+for k=1:Lf+Lh-1                 % Performing the convolution
+    y(k)=0;
+    for i=max(1,k-(Lh-1)):min(k,Lf)
+        y(k)=y(k)+f(i)*h(k-i+1);
+    end
+yzsappr(k)=T*y(k);
+end
+
+title('The two signals being convolved');
+plot(t,yzsappr(1:length(t)), '.b', t, dresp, 'or')
+title('Approximative evaluation of the convolution (zero-state response)');
+xlabel('Time'); ylabel('Zero-state approximative response');
+legend('Sin(2t)', 'Convolution','Location','nw');
