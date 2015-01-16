@@ -1,0 +1,223 @@
+%% Linear Systems and Signals Laboratory 3
+% Fourier Analysis Matlab Laboratory Experiment
+% Submitted by: Michael Soskind
+% TA: Cagdas Karatas, Section 5
+
+%% Question 1
+clear all; clc;
+
+t=-1.5:0.0001:1.5;
+wo=4; E=1;
+
+% approximation with 5 harmonics
+N=5;
+xN=E/2;             % This value is DC-shifted by E/2
+for n=1:N
+    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    if mod(n,5)==0
+        fprintf('The value for %2d is %4f \n', n, an)
+    end
+    xN=xN+an.*cos(n*wo*t);
+end
+% .* indicates the pointwise multiplication
+subplot(231); plot(t,xN)
+xlabel('time')
+ylabel('approximation x10')
+axis([-2 2 -0.2 1.2])
+hold on;
+
+% approximation with 10 harmonics
+N=10;
+xN=E/2;             % This value is DC-shifted by E/2
+for n=1:N
+    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    if mod(n,5)==0
+        fprintf('The value for %2d is %4f \n', n, an)
+    end
+    xN=xN+an.*cos(n*wo*t);
+end
+% .* indicates the pointwise multiplication
+subplot(232); plot(t,xN)
+xlabel('time')
+ylabel('approximation x10')
+axis([-2 2 -0.2 1.2])
+
+% approximation with 20 harmonics
+N=20;
+xN=E/2;             % This value is DC-shifted by E/2
+fprintf('\n')
+for n=1:N
+    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    if mod(n,5)==0
+        fprintf('The value for %2d is %4f \n', n, an)
+    end
+    xN=xN+an.*cos(n*wo*t);
+end
+subplot(233); plot(t,xN);
+xlabel('time')
+ylabel('approximation x20')
+axis([-2 2 -0.2 1.2])
+
+% approximation with 30 harmonics
+N=30;
+xN=E/2;             % This value is DC-shifted by E/2
+fprintf('\n')
+for n=1:N
+    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    if mod(n,5)==0
+        fprintf('The value for %2d is %4f \n', n, an)
+    end
+    xN=xN+an.*cos(n*wo*t);
+end
+subplot(234); plot(t,xN)
+xlabel('time')
+ylabel('approximation x30')
+axis([-2 2 -0.2 1.2])
+
+% approximation with 40 harmonics
+N=40;
+xN=E/2;             % This value is DC-shifted by E/2
+fprintf('\n')
+for n=1:N
+    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    if mod(n,5)==0
+        fprintf('The value for %2d is %4f \n', n, an)
+    end
+    xN=xN+an.*cos(n*wo*t);
+end
+subplot(235); plot(t,xN)
+xlabel('time')
+ylabel('approximation x50')
+axis([-2 2 -0.2 1.2])
+
+% approximation with 50 harmonics
+N=50;
+xN=E/2;             % This value is DC-shifted by E/2
+fprintf('\n')
+for n=1:N
+    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    if mod(n,5)==0
+        fprintf('The value for %2d is %4f \n', n, an)
+    end
+    xN=xN+an.*cos(n*wo*t);
+end
+subplot(236); plot(t,xN)
+xlabel('time')
+ylabel('approximation x50')
+axis([-2 2 -0.2 1.2])
+
+% By zooming in to the graph of the 50 harmonic approximation, one can see
+% that the amplitude of the oscillations is roughly 0.09 units. Something
+% that is important to note is that this value is roughly 10% of the peak
+% value, which is the estimated value of the oscillations as defined by
+% Gibbs.
+
+%% Question 2
+
+figure();
+
+t=-1.5:0.0001:1.5;
+wo=4; E=1;
+
+% approximation with 50 harmonics
+N=50;
+a0=E/2;             % This value is DC-shifted by E/2
+
+for n=1:N
+    an(n)=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2))./2;
+end
+subplot(2,1,1)
+stem(0:length(an),abs([a0,an]));
+xlabel('time'); ylabel('Line Plot x50');
+
+subplot(2,1,2)
+an(find(abs(an)<0.001)) = 0;
+xAngle = angle([a0,an]);
+
+plot([0:length(an)], angle([a0,an]), '.b');
+xlabel('time'); ylabel('approximation x50');
+
+%% Question 3
+
+% approximation with 50 harmonics
+num=[1];
+den=[1 2 3];
+w=0:0.01:4;
+H=freqs(num,den,w);
+magH=abs(H);
+% figure 3.10
+figure ()
+plot(w,magH)
+xlabel('angular frequency in [rad/s]')
+ylabel('magnitude spectrum')
+grid
+% figure 3.11
+figure ()
+semilogx(w,magH)
+xlabel('log(w)')
+ylabel('magnitude spectrum')
+grid
+% figure 3.12
+w=0:0.1:10;
+H=freqs(num,den,w);
+phaseH=angle(H)*180/pi;
+figure ()
+semilogx(w,phaseH)
+xlabel('log(w)')
+ylabel('phase spectrum')
+grid
+
+%% Question 4
+
+figure();
+
+t=0:0.01:4*pi;
+E=5; w0=1;
+
+% first approximation
+N=1;
+yN=0;
+for n=1:N
+    Hm=1/sqrt((3-(n*w0)^2)^2+4*(n*w0)^2);
+    Hp=-atan(2*n*w0/(3-(n*w0)^2));
+    Xn=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    Xnm=abs(Xn);
+    Xnp=angle(Xn);
+    Ynm=Xnm*Hm;
+    Ynp=Xnp+Hp;
+    yN=yN+2*Ynm*cos(n*w0*t+Ynp);
+end
+plot(t,yN,'--')
+hold on;
+
+% third approximation
+N=3;
+yN=0;
+for n=1:N
+    Hm=1/sqrt((3-(n*w0)^2)^2+4*(n*w0)^2);
+    Hp=-atan(2*n*w0/(3-(n*w0)^2));
+    Xn=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    Xnm=abs(Xn);
+    Xnp=angle(Xn);
+    Ynm=Xnm*Hm;
+    Ynp=Xnp+Hp;
+    yN=yN+2*Ynm*cos(n*w0*t+Ynp);
+end
+plot(t,yN,'-.')
+
+% fifth approximation
+N=5;
+yN=0;
+for n=1:N
+    Hm=1/sqrt((3-(n*w0)^2)^2+4*(n*w0)^2);
+    Hp=-atan(2*n*w0/(3-(n*w0)^2));
+    Xn=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
+    Xnm=abs(Xn);
+    Xnp=angle(Xn);
+    Ynm=Xnm*Hm;
+    Ynp=Xnp+Hp;
+    yN=yN+2*Ynm*cos(n*w0*t+Ynp);
+end
+plot(t,yN)
+xlabel('time')
+ylabel('approximations, y1, y3, and y5');
