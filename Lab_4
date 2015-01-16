@@ -1,0 +1,101 @@
+%% LSS Lab 4 (Laplace)
+
+%% Question 1
+
+num = [1, 1];
+den = [1, 5, 6];
+
+% Part A
+t=0:0.01:10;
+yImpulse=impulse(num,den,t);
+figure();
+plot(t,yImpulse);
+xlabel('time');
+ylabel('impulse response');
+grid on;
+
+% Part B
+yStep=step(num,den,t);
+figure();
+plot(t,yStep);
+xlabel('time');
+ylabel('step response');
+grid on;
+
+% Part C
+figure();
+f1=sin(2.*t);
+ySin=lsim(num,den,f1,t);
+plot(t,ySin);
+xlabel('time');
+ylabel('step response');
+grid on;
+
+% Part D
+figure();
+f2=exp(-1.*t);
+yExp=lsim(num,den,f2,t);
+plot(t,yExp);
+xlabel('time');
+ylabel('step response');
+grid on;
+
+%% Question 2
+clear all; clc;
+
+num = [2,0,1,-3,1,4];
+den = [5,2,-1,-3,5,2,-4,2,-1];
+t=0:0.01:10;
+
+% Part a
+[z,p,k]=tf2zp(num,den)
+
+% Part b
+[r,p,k]=residue(num,den);
+for i = 1:length(p)
+    h(:,i) = abs(r(i)).*exp(real(p(i)).*t).*cos(imag(p(i)).*t...
+        +angle(abs(r(i))));
+end
+H1 = h(:,1) + h(:,2) + h(:,3) + h(:,4) + h(:,5) + h(:,6) + h(:,7) + h(:,8);
+
+figure();
+plot(t,H1);
+grid on;
+
+%% Question 3
+
+num = [1];
+den = [1,5,4];
+t=0:0.01:10;
+
+yStep0 = step(num, den, t);
+yRamp0 = lsim(num,den,t,t);
+yRamp2 = [zeros(200,1);yRamp0(1:801)];
+yStep3 = [zeros(300,1);yStep0(1:701)];
+yNew=yStep0-yRamp0+yRamp2+yStep3;
+figure();
+plot(t,yNew);
+title('Response of Given Signal');
+xlabel('time [s]'); ylabel('Response');
+grid on;
+
+%% Question 4
+
+t=0:1:10000; 
+num = [1.65,-0.331,-576,90.6,19080];
+den = [1,0.996,463,97.8,12131,8.11,0];
+yInit4 = 1; a5 = den(2);
+numInit=[1, a5*yInit4];
+yzi=impulse(numInit,den,t);
+
+figure()
+plot(t,yzi); grid; xlabel('Time [s]');
+ylabel('Zero-input response');
+grid on;
+
+figure()
+t=0:0.01:50;
+yzi=impulse(numInit,den,t);
+plot(t,yzi); grid; xlabel('Time [s]');
+ylabel('Zero-input response');
+grid on;
