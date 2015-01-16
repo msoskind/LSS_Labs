@@ -1,223 +1,101 @@
-%% Linear Systems and Signals Laboratory 3
-% Fourier Analysis Matlab Laboratory Experiment
-% Submitted by: Michael Soskind
-% TA: Cagdas Karatas, Section 5
+%% LSS Lab 3 (Laplace)
 
 %% Question 1
-clear all; clc;
 
-t=-1.5:0.0001:1.5;
-wo=4; E=1;
+num = [1, 1];
+den = [1, 5, 6];
 
-% approximation with 5 harmonics
-N=5;
-xN=E/2;             % This value is DC-shifted by E/2
-for n=1:N
-    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    if mod(n,5)==0
-        fprintf('The value for %2d is %4f \n', n, an)
-    end
-    xN=xN+an.*cos(n*wo*t);
-end
-% .* indicates the pointwise multiplication
-subplot(231); plot(t,xN)
-xlabel('time')
-ylabel('approximation x10')
-axis([-2 2 -0.2 1.2])
-hold on;
+% Part A
+t=0:0.01:10;
+yImpulse=impulse(num,den,t);
+figure();
+plot(t,yImpulse);
+xlabel('time');
+ylabel('impulse response');
+grid on;
 
-% approximation with 10 harmonics
-N=10;
-xN=E/2;             % This value is DC-shifted by E/2
-for n=1:N
-    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    if mod(n,5)==0
-        fprintf('The value for %2d is %4f \n', n, an)
-    end
-    xN=xN+an.*cos(n*wo*t);
-end
-% .* indicates the pointwise multiplication
-subplot(232); plot(t,xN)
-xlabel('time')
-ylabel('approximation x10')
-axis([-2 2 -0.2 1.2])
+% Part B
+yStep=step(num,den,t);
+figure();
+plot(t,yStep);
+xlabel('time');
+ylabel('step response');
+grid on;
 
-% approximation with 20 harmonics
-N=20;
-xN=E/2;             % This value is DC-shifted by E/2
-fprintf('\n')
-for n=1:N
-    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    if mod(n,5)==0
-        fprintf('The value for %2d is %4f \n', n, an)
-    end
-    xN=xN+an.*cos(n*wo*t);
-end
-subplot(233); plot(t,xN);
-xlabel('time')
-ylabel('approximation x20')
-axis([-2 2 -0.2 1.2])
+% Part C
+figure();
+f1=sin(2.*t);
+ySin=lsim(num,den,f1,t);
+plot(t,ySin);
+xlabel('time');
+ylabel('step response');
+grid on;
 
-% approximation with 30 harmonics
-N=30;
-xN=E/2;             % This value is DC-shifted by E/2
-fprintf('\n')
-for n=1:N
-    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    if mod(n,5)==0
-        fprintf('The value for %2d is %4f \n', n, an)
-    end
-    xN=xN+an.*cos(n*wo*t);
-end
-subplot(234); plot(t,xN)
-xlabel('time')
-ylabel('approximation x30')
-axis([-2 2 -0.2 1.2])
-
-% approximation with 40 harmonics
-N=40;
-xN=E/2;             % This value is DC-shifted by E/2
-fprintf('\n')
-for n=1:N
-    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    if mod(n,5)==0
-        fprintf('The value for %2d is %4f \n', n, an)
-    end
-    xN=xN+an.*cos(n*wo*t);
-end
-subplot(235); plot(t,xN)
-xlabel('time')
-ylabel('approximation x50')
-axis([-2 2 -0.2 1.2])
-
-% approximation with 50 harmonics
-N=50;
-xN=E/2;             % This value is DC-shifted by E/2
-fprintf('\n')
-for n=1:N
-    an=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    if mod(n,5)==0
-        fprintf('The value for %2d is %4f \n', n, an)
-    end
-    xN=xN+an.*cos(n*wo*t);
-end
-subplot(236); plot(t,xN)
-xlabel('time')
-ylabel('approximation x50')
-axis([-2 2 -0.2 1.2])
-
-% By zooming in to the graph of the 50 harmonic approximation, one can see
-% that the amplitude of the oscillations is roughly 0.09 units. Something
-% that is important to note is that this value is roughly 10% of the peak
-% value, which is the estimated value of the oscillations as defined by
-% Gibbs.
+% Part D
+figure();
+f2=exp(-1.*t);
+yExp=lsim(num,den,f2,t);
+plot(t,yExp);
+xlabel('time');
+ylabel('step response');
+grid on;
 
 %% Question 2
+clear all; clc;
+
+num = [2,0,1,-3,1,4];
+den = [5,2,-1,-3,5,2,-4,2,-1];
+t=0:0.01:10;
+
+% Part a
+[z,p,k]=tf2zp(num,den)
+
+% Part b
+[r,p,k]=residue(num,den);
+for i = 1:length(p)
+    h(:,i) = abs(r(i)).*exp(real(p(i)).*t).*cos(imag(p(i)).*t...
+        +angle(abs(r(i))));
+end
+H1 = h(:,1) + h(:,2) + h(:,3) + h(:,4) + h(:,5) + h(:,6) + h(:,7) + h(:,8);
 
 figure();
-
-t=-1.5:0.0001:1.5;
-wo=4; E=1;
-
-% approximation with 50 harmonics
-N=50;
-a0=E/2;             % This value is DC-shifted by E/2
-
-for n=1:N
-    an(n)=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2))./2;
-end
-subplot(2,1,1)
-stem(0:length(an),abs([a0,an]));
-xlabel('time'); ylabel('Line Plot x50');
-
-subplot(2,1,2)
-an(find(abs(an)<0.001)) = 0;
-xAngle = angle([a0,an]);
-
-plot([0:length(an)], angle([a0,an]), '.b');
-xlabel('time'); ylabel('approximation x50');
+plot(t,H1);
+grid on;
 
 %% Question 3
 
-% approximation with 50 harmonics
-num=[1];
-den=[1 2 3];
-w=0:0.01:4;
-H=freqs(num,den,w);
-magH=abs(H);
-% figure 3.10
-figure ()
-plot(w,magH)
-xlabel('angular frequency in [rad/s]')
-ylabel('magnitude spectrum')
-grid
-% figure 3.11
-figure ()
-semilogx(w,magH)
-xlabel('log(w)')
-ylabel('magnitude spectrum')
-grid
-% figure 3.12
-w=0:0.1:10;
-H=freqs(num,den,w);
-phaseH=angle(H)*180/pi;
-figure ()
-semilogx(w,phaseH)
-xlabel('log(w)')
-ylabel('phase spectrum')
-grid
+num = [1];
+den = [1,5,4];
+t=0:0.01:10;
+
+yStep0 = step(num, den, t);
+yRamp0 = lsim(num,den,t,t);
+yRamp2 = [zeros(200,1);yRamp0(1:801)];
+yStep3 = [zeros(300,1);yStep0(1:701)];
+yNew=yStep0-yRamp0+yRamp2+yStep3;
+figure();
+plot(t,yNew);
+title('Response of Given Signal');
+xlabel('time [s]'); ylabel('Response');
+grid on;
 
 %% Question 4
 
-figure();
+t=0:1:10000; 
+num = [1.65,-0.331,-576,90.6,19080];
+den = [1,0.996,463,97.8,12131,8.11,0];
+yInit4 = 1; a5 = den(2);
+numInit=[1, a5*yInit4];
+yzi=impulse(numInit,den,t);
 
-t=0:0.01:4*pi;
-E=5; w0=1;
+figure()
+plot(t,yzi); grid; xlabel('Time [s]');
+ylabel('Zero-input response');
+grid on;
 
-% first approximation
-N=1;
-yN=0;
-for n=1:N
-    Hm=1/sqrt((3-(n*w0)^2)^2+4*(n*w0)^2);
-    Hp=-atan(2*n*w0/(3-(n*w0)^2));
-    Xn=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    Xnm=abs(Xn);
-    Xnp=angle(Xn);
-    Ynm=Xnm*Hm;
-    Ynp=Xnp+Hp;
-    yN=yN+2*Ynm*cos(n*w0*t+Ynp);
-end
-plot(t,yN,'--')
-hold on;
-
-% third approximation
-N=3;
-yN=0;
-for n=1:N
-    Hm=1/sqrt((3-(n*w0)^2)^2+4*(n*w0)^2);
-    Hp=-atan(2*n*w0/(3-(n*w0)^2));
-    Xn=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    Xnm=abs(Xn);
-    Xnp=angle(Xn);
-    Ynm=Xnm*Hm;
-    Ynp=Xnp+Hp;
-    yN=yN+2*Ynm*cos(n*w0*t+Ynp);
-end
-plot(t,yN,'-.')
-
-% fifth approximation
-N=5;
-yN=0;
-for n=1:N
-    Hm=1/sqrt((3-(n*w0)^2)^2+4*(n*w0)^2);
-    Hp=-atan(2*n*w0/(3-(n*w0)^2));
-    Xn=(E/(n*pi))*(sin(n*pi/2)-sin(n*3*pi/2));
-    Xnm=abs(Xn);
-    Xnp=angle(Xn);
-    Ynm=Xnm*Hm;
-    Ynp=Xnp+Hp;
-    yN=yN+2*Ynm*cos(n*w0*t+Ynp);
-end
-plot(t,yN)
-xlabel('time')
-ylabel('approximations, y1, y3, and y5');
+figure()
+t=0:0.01:50;
+yzi=impulse(numInit,den,t);
+plot(t,yzi); grid; xlabel('Time [s]');
+ylabel('Zero-input response');
+grid on;
