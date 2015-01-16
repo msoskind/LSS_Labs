@@ -1,0 +1,166 @@
+%% Laboratory Experiment 1
+% Michael Soskind
+%% Part 1
+
+%continuous time unit step signal
+figure();
+x = [3, -5];        % x is the value of the shift
+
+for i = 1:length(x)
+    t1 = -10:x(i); t2 = x(i):10; t = [t1, t2];
+    u = [zeros(1,x(i)+11), ones(1,-x(i)+11)];
+    subplot(2,1,i);
+    plot(t,u); axis([-10,10,-0.5,1.5]); grid;
+    title('Unit Step'); xlabel('Time (t)'); ylabel('u(t)');
+end
+
+% continuous time unit rectangular pulse
+figure();
+x = [3, -5];        % x is the value of the shift
+
+for i = 1:length(x)
+    t1 = -10:-3+x(i); t2 = -3+x(i):3+x(i); t3 = 3+x(i):10; ...
+        t = [t1, t2, t3];
+    p6 = [zeros(1,8+x(i)), ones(1,7), zeros(1,8-x(i))];
+    subplot(2,1,i);
+    plot(t,p6); axis([-10,10,-0.5,1.5]); grid;
+    title('Rectangular Pulse'); xlabel('Time (t)'); ylabel('p6(t)');
+end
+
+% continuous time unit ramp signal
+figure();
+x = [3, -5];        % x is the value of the shift
+
+for i = 1:length(x)
+    t1 = -10:-1+x(i); t2 = x(i):10; t = [t1, t2];
+    r = [zeros(1,10+x(i)) t2-x(i)];
+    subplot(2,1,i);
+    plot(t,r); axis([-10,10,-.5,1.5]); grid;
+    title('Unit Ramp'); xlabel('Time (t)'); ylabel('r(t)');
+end
+
+% continuous time triangular pulse
+figure();
+x = [3, -5];        % x is the value of the shift
+
+for i = 1:length(x)
+    t1 = -10:-3+x(i); t2 = -2+x(i):0+x(i); t3 = 0+x(i):2+x(i); ...
+        t4 = 3+x(i):10; t = [t1, t2, t3, t4];
+    tri4 = [zeros(1,8+x(i)), 1-.5*x(i) + 0.5*t2, 1+.5*x(i) - 0.5*t3, ...
+        zeros(1,8-x(i))];
+    subplot(2,1,i);
+    plot(t,tri4); axis([-10,10,-0.5,1.5]); grid;
+    title('Triangular Pulse'); xlabel('Time (t)'); ylabel('tri4(t)');
+end
+
+%% Part 2
+
+% continuous time unit rectangular pulse
+% (approximation of the delta function)
+figure();
+x = [0];        % x is the value of the shift
+tau = [0.3, 0.2, 0.1];      % tau is the width of the impulse
+
+for i = 1:length(x)
+    for j = 1:length(tau)
+        t1 = -10:0.05:-tau(j)/2+x(i);...
+            t2 = -tau(j)/2+x(i):0.05:tau(j)/2+x(i);...
+            t3 = tau(j)/2+x(i):0.05:10; t = [t1, t2, t3];
+        p6 = [zeros(1,(10-tau(j)/2+x(i))*20+1),...
+            ones(1,2*tau(j)/2*20+1)/tau(j), ...
+            zeros(1,(10-tau(j)/2+x(i))*20+1)];
+        subplot(3,1,j);
+        plot(t,p6); axis([-10,10,-0.5,12]); grid;
+        title('Delta Function Approximation'); xlabel('Time (t)');...
+            ylabel(['p', num2str(tau(j)),'(t)']);
+    end
+end
+
+% Implementing a Sinc Function based on the definition
+% There is also a built-in Sinc function in MATLAB
+figure();
+t1 = -5:0.1:5; t2 = -15:0.1:15; t3 = -30:0.1:30;
+mySinc = @(t) sin(pi()*t)./(pi()*t);
+subplot(3,1,1); plot(t1, mySinc(t1));
+title('Sinc Function Approximation'); xlabel('Time (t)'); ...
+    ylabel('Sinc(t)');
+grid on; axis([-5,5,-0.5,1.5]);
+subplot(3,1,2); plot(t2, mySinc(t2));
+title('Sinc Function Approximation'); xlabel('Time (t)'); ...
+    ylabel('Sinc(t)');
+grid on; axis([-15,15,-0.5,1.5]);
+subplot(3,1,3); plot(t3, mySinc(t3));
+title('Sinc Function Approximation'); xlabel('Time (t)'); ...
+    ylabel('Sinc(t)');
+grid on; axis([-30,30,-0.5,1.5]);
+
+%% Part 3
+
+% Problem 7
+figure();
+t = 0:0.1:6.28;
+for i = 1:3
+    subplot(3,1,i); plot(t, sin(i*t));
+    axis([0,6.28,-1.5,1.5]); grid;
+    title('Sine Waves Changing Period'); xlabel('Time (t)');...
+        ylabel(['sin(', num2str(i), 't)']);
+end
+
+% Problem 8
+figure();
+t = 0:0.1:6.28;
+subplot(2,1,1); plot(t, sin(4*(t-1)));
+axis([0,6.28,-1.5,1.5]); grid;
+title('Sine Waves with Different Time/Frequency'); xlabel('Time (t)'); ...
+    ylabel(['sin(', num2str(i), 't)']);
+subplot(2,1,2); plot(t, sin(2*t-3));
+axis([0,6.28,-1.5,1.5]); grid;
+title('Sine Waves with Different Time/Frequency'); xlabel('Time (t)'); ...
+    ylabel(['sin(', num2str(i), 't)']);
+
+% Problem 9
+
+a = [0.5,1,5];
+y = @(m, n) exp(-m.*n).*sin(m.*n);
+t = 0:0.01:6.28;
+
+figure();
+for i = 1:3
+    subplot(3,1,i); plot(t, y(a(i), t));
+    axis([0,6.28,-0.5,0.5]); grid;
+    title('Effects of time Scaling'); xlabel('Time (t)'); ...
+        ylabel(['sin(', num2str(i), 't)']);
+end
+
+%% Part 4
+
+% Summing Signals
+
+% Problem 10
+x = 0;
+
+figure();
+t1 = -10:x; t2 = x:10; t = [t1, t2];
+r = [zeros(1,11+x), t2-x];
+u = [zeros(1,x+11), ones(1,-x+11)];
+plot(t, u, '.b', t, r, '--b', t, u+r, '.-b')
+
+%% Part 5
+
+% Problem 13
+
+figure();
+x = 1;
+t1 = -10:x; t2 = x:10; t = [t1, t2];
+u = [zeros(1,x+11), ones(1,-x+11)];
+x = -2;
+t1 = -10:x; t2 = x:10; t = [t1, t2];
+r = [zeros(1,11+x), t2-x];
+subplot(2,1,1); plot(t, u, '.b')
+axis([-10,10,-0.5,1.5]); grid;
+title('Shifted Discrete Step Function'); xlabel('Time (t)'); ...
+    ylabel(['u[k-1]']);
+subplot(2,1,2); plot(t, r, '.b')
+axis([-10,10,-0.5,3.5]); grid;
+title('Shifted Discrete Ramp Function'); xlabel('Time (t)'); ...
+    ylabel(['r[k+2]']);
